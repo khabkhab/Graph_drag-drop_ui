@@ -21,19 +21,6 @@ def open_csv(name, argument = None, ):
         return df
     
 
-# plot the data
-def plotting(x_column, y_column, name):
-    figure = Figure(figsize=(10, 10), dpi=320)
-    figure, ax1 = plt.subplots()
-    ax1 = figure.gca()
-    df = open_csv(name)
-    ax1.plot(df[x_column], df[y_column], color = 'purple', marker="o", linestyle = "", markersize=5)
-    # ax2.plot(dataframe['date'], dataframe['BMI_index'], color = 'green', marker = "*", linestyle = "dotted")
-    ax1.set_xlabel(x_column)
-    ax1.set_ylabel(y_column)
-    figure.tight_layout()
-    plt.tight_layout()
-    return figure
 
 class MatplotlibCanvas(FigureCanvas):
     def __init__(self, parent = None, width = 5, height = 5,dpi = 120):
