@@ -36,11 +36,12 @@ def plotting(x_column, y_column, name):
     return figure
 
 class MatplotlibCanvas(FigureCanvas):
-    def __init__(self, parent=None, width = 10, height = 10, dpi = 320):
-        fig = Figure(figsize=(width, height), dpi=dpi)
+    def __init__(self, parent = None, width = 5, height = 5,dpi = 120):
+        fig = Figure(figsize = (width, height), dpi=dpi)
         self.axes = fig.add_subplot(111)
         super(MatplotlibCanvas, self).__init__(fig)
         fig.tight_layout()
+        
 
 # GUI
 class graph_from_csv(QMainWindow):
@@ -48,6 +49,14 @@ class graph_from_csv(QMainWindow):
         super(graph_from_csv, self).__init__()
         uic.loadUi("graph_csv_gui.ui", self)
         self.show()
+        
+        self.canvas = MatplotlibCanvas(self)
+        self.verticalLayout1.addWidget(self.canvas)
+        
+        
+        self.toolbar = Navi(self.canvas, self.centralwidget) ### check centralwidget
+        self.horizontalLayout_1.addWidget(self.toolbar)
+        self.canvas.hide()
         self.df = []
         self.label = self.findChild(QLabel, 'ColumnNames')
         self.FileButton.clicked.connect(self.getFile)
@@ -63,24 +72,23 @@ class graph_from_csv(QMainWindow):
         Y_column = str(self.comboBox_2.currentText())
         # self.scene = QtWidgets.QGraphicsScene()
         # self.view = QtWidgets.QGraphicsView(self.scene)  
-        plt.clf()
-              
-        self.canvas = MatplotlibCanvas(self)
-        self.verticalLayout1.addWidget(self.canvas)
+        self.canvas.axes.cla()
         #toolbat 
-        self.toolbar = Navi(self.canvas, self.centralwidget) ### check centralwidget
-        self.horizontalLayout_1.addWidget(self.toolbar)
+
         # self.proxy_widget = self.scene.addWidget(self.canvas)
-        
-        
         self.df = open_csv(self.filename)
-        self.canvas.axes.plot(self.df[X_column], self.df[Y_column])
-        legend = self.canvas.axes.legend()
-        self.canvas.axes.set_xlabel(X_column)
-        self.canvas.axes.set_ylabel(Y_column)
-        self.canvas.axes.set_title(f'{Y_column} dependance on {X_column}')
-        self.canvas.draw()
+        ax = self.canvas.axes
+        ax.set_position([0.15, 0.15, 0.8, 0.8])
         
+        ax.plot(self.df[X_column], self.df[Y_column])
+        legend = ax.legend()
+        legend.set_draggable(True)
+        ax.set_xlabel(X_column)
+        ax.set_ylabel(Y_column)
+        ax.set_title(f'{Y_column} dependance on {X_column}')
+        self.canvas.draw()
+        self.canvas.show()
+    
     #inputs data to the database; shows the BMI value
     def getFile(self):
         self.filename = QFileDialog.getOpenFileName(filter = "csv (*.csv)")[0]
