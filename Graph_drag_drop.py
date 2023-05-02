@@ -66,12 +66,14 @@ class graph_from_csv(QMainWindow):
         self.df = open_csv(self.filename)
         ax = self.canvas.axes
         ax.set_position([0.15, 0.15, 0.8, 0.8])
-        
-        ax.plot(self.df[X_column], self.df[Y_column], label = Y_column)
-
-        ax.set_xlabel(X_column)
-        ax.set_ylabel(Y_column)
-        ax.set_title(f'{Y_column} dependance on {X_column}')
+        if X_column == Y_column:
+        # ax.plot(self.df[X_column], self.df[Y_column], label = Y_column)
+            self.df.plot(ax = self.canvas.axes)
+        else: 
+            ax.plot(self.df[X_column], self.df[Y_column], label = Y_column)
+            ax.set_xlabel(X_column)
+            ax.set_ylabel(Y_column)
+            ax.set_title(f'{Y_column} dependance on {X_column}')
         legend = ax.legend()
         legend.set_draggable(True)
         self.canvas.draw()
