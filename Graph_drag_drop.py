@@ -12,10 +12,10 @@ from matplotlib.figure import Figure
 
 
 
-def open_csv(name, argument = None, ):
+def open_csv(name, argument = None):
     df = pd.read_csv(name, encoding='utf-8').fillna(0)
     column_names = df.columns.values.tolist()
-    if argument == "columns":
+    if argument:
         return column_names
     else:
         return df
@@ -44,7 +44,7 @@ class graph_from_csv(QMainWindow):
         self.toolbar = Navi(self.canvas, self.centralwidget) ### check centralwidget
         self.horizontalLayout_1.addWidget(self.toolbar)
         self.canvas.hide()
-        self.df = []
+
         self.label = self.findChild(QLabel, 'ColumnNames')
         self.FileButton.clicked.connect(self.getFile)
         self.PlotButton.clicked.connect(self.graph)
@@ -56,19 +56,15 @@ class graph_from_csv(QMainWindow):
     # plotting graph        
     def graph(self):
         X_column = str(self.comboBox_1.currentText())
-        Y_column = str(self.comboBox_2.currentText())
-        # self.scene = QtWidgets.QGraphicsScene()
-        # self.view = QtWidgets.QGraphicsView(self.scene)  
+        Y_column = str(self.comboBox_2.currentText()) 
         self.canvas.axes.cla()
-        #toolbat 
-
-        # self.proxy_widget = self.scene.addWidget(self.canvas)
         self.df = open_csv(self.filename)
         ax = self.canvas.axes
         ax.set_position([0.15, 0.15, 0.8, 0.8])
         if X_column == Y_column:
-        # ax.plot(self.df[X_column], self.df[Y_column], label = Y_column)
             self.df.plot(ax = self.canvas.axes)
+            ax.set_xlabel('X axis')
+            ax.set_ylabel('Y axis')
         else: 
             ax.plot(self.df[X_column], self.df[Y_column], label = Y_column)
             ax.set_xlabel(X_column)
@@ -79,7 +75,7 @@ class graph_from_csv(QMainWindow):
         self.canvas.draw()
         self.canvas.show()
     
-    #inputs data to the database; shows the BMI value
+    #gets the file, list the columns, passes list of columns to combobox
     def getFile(self):
         self.filename = QFileDialog.getOpenFileName(filter = "csv (*.csv)")[0]
         self.list_of_columns = open_csv(self.filename, "columns")
